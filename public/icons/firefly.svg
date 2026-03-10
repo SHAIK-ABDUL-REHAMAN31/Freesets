@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="ff" x1="16" y1="4" x2="32" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="50%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer glow -->
+  <ellipse cx="24" cy="24" rx="14" ry="16" fill="url(#ff)" opacity="0.1"/>
+  <!-- Main flame body -->
+  <path d="M24 4 C24 4, 38 18, 36 28 C34 36, 28 42, 24 44 C20 42, 14 36, 12 28 C10 18, 24 4, 24 4 Z" fill="url(#ff)"/>
+  <!-- Inner flame highlight -->
+  <path d="M24 16 C24 16, 32 24, 30 30 C29 34, 26 38, 24 40 C22 38, 19 34, 18 30 C16 24, 24 16, 24 16 Z" fill="#FBBF24" opacity="0.6"/>
+  <!-- Core bright center -->
+  <ellipse cx="24" cy="32" rx="4" ry="6" fill="#FEF3C7" opacity="0.8"/>
+</svg>

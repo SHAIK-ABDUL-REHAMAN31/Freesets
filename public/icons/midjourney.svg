@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="mj" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer diamond -->
+  <path d="M24 2 L46 24 L24 46 L2 24 Z" fill="url(#mj)" opacity="0.2"/>
+  <!-- Inner diamond -->
+  <path d="M24 8 L40 24 L24 40 L8 24 Z" fill="url(#mj)" opacity="0.5"/>
+  <!-- Core diamond -->
+  <path d="M24 14 L34 24 L24 34 L14 24 Z" fill="url(#mj)"/>
+</svg>

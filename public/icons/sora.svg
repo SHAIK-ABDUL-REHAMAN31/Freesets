@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="sora" x1="12" y1="8" x2="36" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <!-- Circle background -->
+  <circle cx="24" cy="24" r="20" fill="url(#sora)" opacity="0.12"/>
+  <!-- S lettermark -->
+  <path d="M30 14 C30 14, 18 10, 16 18 C14 24, 28 24, 28 24 C28 24, 34 24, 32 30 C30 38, 18 34, 18 34"
+        stroke="url(#sora)" stroke-width="4" stroke-linecap="round" fill="none"/>
+</svg>

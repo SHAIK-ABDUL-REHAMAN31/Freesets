@@ -1,0 +1,195 @@
+/* ─── Google Fonts ────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+/* ─── Tailwind Layers ────────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ──────────────────────────────────────────────────────── */
+:root {
+  --brand: #ffffff;
+  --brand-light: #ffffff;
+  --brand-dark: #ffffff;
+  --accent: #06B6D4;
+  --accent-light: #67E8F9;
+  --surface: #FFFFFF;
+  --surface-card: #F9FAFB;
+  --surface-border: #E5E7EB;
+}
+
+/* ─── Global Resets & Defaults ───────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  font-family: 'DM Sans', var(--font-dm-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #050505;
+  color: #0F0F0F;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Syne', var(--font-syne), system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ─── Utility Classes ────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Purple → Cyan gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+  }
+
+  /* Card lift + glow on hover */
+  .card-hover {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.35),
+      0 8px 10px -6px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(124, 58, 237, 0.10),
+      0 0 40px -10px rgba(124, 58, 237, 0.15);
+  }
+
+  /* Hide scrollbar but keep scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Masonry grid via CSS columns */
+  .prompt-masonry {
+    column-count: 2;
+    column-fill: balance;
+  }
+
+  @media (min-width: 640px) {
+    .prompt-masonry {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .prompt-masonry {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .prompt-masonry {
+      column-count: 3;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .prompt-masonry {
+      column-count: 4;
+    }
+  }
+
+  /* Brand gradient background */
+  .bg-gradient-brand {
+    background-image: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+  }
+
+  /* Reverse z-index for decorative lines behind content */
+  .z-reverse {
+    z-index: -1;
+  }
+}
+
+/* ─── Copy Button Pulse Animation ────────────────────────────────────────── */
+@keyframes copy-btn-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.copy-btn-pulse {
+  animation: copy-btn-pulse 0.3s ease-in-out;
+}
+
+/* ─── Scrollbar Styling (Webkit) ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
+/* ─── Selection Highlight ────────────────────────────────────────────────── */
+::selection {
+  background: rgba(124, 58, 237, 0.30);
+  color: #ffffff;
+}
+
+/* ─── shadcn/ui CSS Variables (Slate base — dark by default) ─────────────── */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+  }
+}

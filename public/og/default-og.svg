@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A0A0F"/>
+      <stop offset="100%" stop-color="#141420"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <line x1="0" y1="157" x2="1200" y2="157" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+  <line x1="0" y1="315" x2="1200" y2="315" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+  <line x1="0" y1="472" x2="1200" y2="472" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+  <line x1="300" y1="0" x2="300" y2="630" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+  <line x1="600" y1="0" x2="600" y2="630" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+  <line x1="900" y1="0" x2="900" y2="630" stroke="#ffffff" stroke-width="0.5" opacity="0.03"/>
+
+  <!-- Glow effect behind logo -->
+  <ellipse cx="600" cy="280" rx="200" ry="120" fill="#7C3AED" opacity="0.08"/>
+
+  <!-- "F" Logo Mark -->
+  <rect x="562" y="218" width="76" height="76" rx="18" fill="url(#brand)"/>
+  <text x="600" y="275" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="800" fill="#ffffff" text-anchor="middle">F</text>
+
+  <!-- Brand name -->
+  <text x="600" y="345" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">Freesets</text>
+
+  <!-- Tagline -->
+  <text x="600" y="385" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#ffffff" opacity="0.5" text-anchor="middle" letter-spacing="1">Discover the best AI generation prompts</text>
+
+  <!-- Bottom decorative line -->
+  <rect x="540" y="415" width="120" height="3" rx="1.5" fill="url(#brand)" opacity="0.6"/>
+
+  <!-- Corner accents -->
+  <rect x="32" y="32" width="48" height="3" rx="1.5" fill="#7C3AED" opacity="0.3"/>
+  <rect x="32" y="32" width="3" height="48" rx="1.5" fill="#7C3AED" opacity="0.3"/>
+  <rect x="1120" y="595" width="48" height="3" rx="1.5" fill="#7C3AED" opacity="0.3"/>
+  <rect x="1165" y="550" width="3" height="48" rx="1.5" fill="#7C3AED" opacity="0.3"/>
+</svg>

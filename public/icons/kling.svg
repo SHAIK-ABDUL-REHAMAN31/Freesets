@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="kl" x1="10" y1="8" x2="38" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded background -->
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#kl)" opacity="0.12"/>
+  <!-- K lettermark -->
+  <!-- Vertical stroke -->
+  <line x1="16" y1="12" x2="16" y2="36" stroke="url(#kl)" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Upper diagonal -->
+  <line x1="16" y1="24" x2="34" y2="12" stroke="url(#kl)" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Lower diagonal -->
+  <line x1="16" y1="24" x2="34" y2="36" stroke="url(#kl)" stroke-width="4.5" stroke-linecap="round"/>
+</svg>
