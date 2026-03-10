@@ -57,18 +57,18 @@ const SLUG_TO_CATEGORY: Record<CategorySlug, string> = {
     movie: 'MOVIE',
 };
 
+import { getPrompts } from '@/server/services/prompt.service';
+
 async function getCategoryPrompts(categoryEnum: string): Promise<IPromptCard[]> {
     try {
-        const base = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-        const res = await fetch(
-            `${base}/api/prompts?category=${categoryEnum}&limit=20&page=1&sortBy=popular`,
-            { next: { revalidate: 3600 } }, // 1-hour ISR per category
-        );
-
-        if (!res.ok) return [];
-        const json = await res.json();
-        return json.data || [];
-    } catch {
+        const { prompts } = await getPrompts({ category: categoryEnum, sortBy: 'popular' } as any, 1, 20);
+        return prompts.map((p: any) => {
+            const doc = { ...p, id: p._id.toString() };
+            delete doc._id;
+            return doc;
+        }) as unknown as IPromptCard[];
+    } catch (error) {
+        console.error('Category generation error:', error);
         return [];
     }
 }
@@ -129,10 +129,12 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             </div>
 
             {/* ── Gallery — category is locked in via initialSearchParams ───────── */}
-            <FreesetsGallery
-                initialPrompts={initialPrompts}
-                initialSearchParams={mergedParams}
-            />
+            <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-surface-card" />}>
+                <FreesetsGallery
+                    initialPrompts={initialPrompts}
+                    initialSearchParams={mergedParams}
+                />
+            </Suspense>
         </div>
     );
 }

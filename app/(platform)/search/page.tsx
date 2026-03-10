@@ -10,37 +10,36 @@ import { SearchResultsGallery } from './SearchResultsGallery';
 // Data Fetching
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+import { getPrompts } from '@/server/services/prompt.service';
 
 async function searchPrompts(
     query: string,
     searchParams: Record<string, string>,
 ): Promise<{ data: IPromptCard[]; total: number }> {
     try {
-        const qs = new URLSearchParams({
-            q: query,
-            limit: '20',
-            page: '1',
+        const filters: any = {
+            search: query,
             sortBy: searchParams.sortBy || 'newest',
-            ...(searchParams.category && { category: searchParams.category }),
-            ...(searchParams.aiTool && { aiTool: searchParams.aiTool }),
-            ...(searchParams.aspectRatio && { aspectRatio: searchParams.aspectRatio }),
-            ...(searchParams.contentType && searchParams.contentType !== 'all' && {
-                isPremium: String(searchParams.contentType === 'premium'),
-            }),
-        });
-
-        const res = await fetch(`${BASE_URL}/api/prompts?${qs}`, {
-            next: { revalidate: 30 },
-        });
-
-        if (!res.ok) return { data: [], total: 0 };
-        const json = await res.json();
-        return {
-            data: json.data ?? [],
-            total: json.total ?? json.data?.length ?? 0,
         };
-    } catch {
+
+        if (searchParams.category) filters.category = searchParams.category;
+        if (searchParams.aiTool) filters.aiTools = [searchParams.aiTool];
+        if (searchParams.aspectRatio) filters.aspectRatio = searchParams.aspectRatio;
+        if (searchParams.contentType && searchParams.contentType !== 'all') {
+            filters.isPremium = searchParams.contentType === 'premium';
+        }
+
+        const { prompts, total } = await getPrompts(filters, 1, 20);
+
+        const safePrompts = prompts.map((p: any) => {
+            const doc = { ...p, id: p._id.toString() };
+            delete doc._id;
+            return doc;
+        }) as unknown as IPromptCard[];
+
+        return { data: safePrompts, total };
+    } catch (error) {
+        console.error('Search rendering error:', error);
         return { data: [], total: 0 };
     }
 }
@@ -131,7 +130,9 @@ export default async function SearchPage({ searchParams }: PageProps) {
                         Find the perfect AI prompt from thousands of curated options across every style and tool.
                     </p>
                     <div className="w-full max-w-xl">
-                        <SearchBar className="w-full" />
+                        <Suspense fallback={<div className="h-12 w-full animate-pulse rounded-lg bg-surface-card" />}>
+                            <SearchBar className="w-full" />
+                        </Suspense>
                     </div>
                 </div>
             </div>
@@ -147,7 +148,9 @@ export default async function SearchPage({ searchParams }: PageProps) {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 {/* Search bar at top so user can search again */}
                 <div className="mb-8 max-w-xl mx-auto">
-                    <SearchBar defaultValue={query} className="w-full" />
+                    <Suspense fallback={<div className="h-12 w-full animate-pulse rounded-lg bg-surface-card" />}>
+                        <SearchBar defaultValue={query} className="w-full" />
+                    </Suspense>
                 </div>
 
                 <EmptyState
@@ -182,11 +185,13 @@ export default async function SearchPage({ searchParams }: PageProps) {
             </div>
 
             {/* ── Results gallery with infinite scroll ────────────────────────── */}
-            <SearchResultsGallery
-                initialPrompts={initialPrompts}
-                initialSearchParams={params}
-                query={query}
-            />
+            <Suspense fallback={<div className="h-96 w-full animate-pulse rounded-2xl bg-surface-card" />}>
+                <SearchResultsGallery
+                    initialPrompts={initialPrompts}
+                    initialSearchParams={params}
+                    query={query}
+                />
+            </Suspense>
         </div>
     );
 }
