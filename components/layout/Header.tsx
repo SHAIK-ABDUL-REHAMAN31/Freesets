@@ -38,13 +38,29 @@ function SearchResultCard({ prompt, onClose }: { prompt: IPromptCard; onClose: (
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async (e: React.MouseEvent) => {
+        e.preventDefault();
         e.stopPropagation();
         try {
             await navigator.clipboard.writeText(prompt.promptText || '');
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
-            console.error('Failed to copy:', err);
+            // Fallback for mobile browsers that block clipboard API
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = prompt.promptText || '';
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch (fallbackErr) {
+                console.error('Failed to copy:', fallbackErr);
+            }
         }
     };
 
@@ -76,10 +92,10 @@ function SearchResultCard({ prompt, onClose }: { prompt: IPromptCard; onClose: (
             <button
                 onClick={handleCopy}
                 className={cn(
-                    'shrink-0 self-center flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150',
+                    'shrink-0 self-center flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150',
                     copied
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-white/5 text-foreground/50 hover:bg-white/10 hover:text-foreground',
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-white text-black hover:bg-zinc-200',
                 )}
             >
                 {copied ? (
@@ -180,10 +196,19 @@ export default function Header() {
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             const target = e.target as Node;
-            if (dropdownRef.current && !dropdownRef.current.contains(target)) {
-                setShowDropdown(false);
-            }
-            if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(target)) {
+            
+            // Critical fix for mobile: If target was unmounted (e.g. state change on click), ignore it
+            if (!document.contains(target)) return;
+            
+            const isOutsideDesktop = dropdownRef.current && !dropdownRef.current.contains(target);
+            const isOutsideMobile = mobileDropdownRef.current && !mobileDropdownRef.current.contains(target);
+
+            // If we have both refs, it must be outside both to close
+            // If we have only one ref, it must be outside that one
+            const outsideDesktop = dropdownRef.current ? isOutsideDesktop : true;
+            const outsideMobile = mobileDropdownRef.current ? isOutsideMobile : true;
+
+            if (outsideDesktop && outsideMobile) {
                 setShowDropdown(false);
             }
         }
