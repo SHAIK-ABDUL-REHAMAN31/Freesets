@@ -10,19 +10,19 @@
 const BASE = 'https://res.cloudinary.com';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// getThumbnailUrl  — 400 px wide, WebP, quality 80
+// getThumbnailUrl  — original quality, no transforms
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getThumbnailUrl(publicId: string, cloudName: string): string {
-    return `${BASE}/${cloudName}/image/upload/w_400,c_scale,q_80,f_webp/${publicId}`;
+    return `${BASE}/${cloudName}/image/upload/${publicId}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// getPreviewUrl  — 1200 px wide, WebP, quality 90
+// getPreviewUrl  — original quality, no transforms
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getPreviewUrl(publicId: string, cloudName: string): string {
-    return `${BASE}/${cloudName}/image/upload/w_1200,c_scale,q_90,f_webp/${publicId}`;
+    return `${BASE}/${cloudName}/image/upload/${publicId}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

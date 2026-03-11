@@ -96,7 +96,7 @@ export async function uploadVideo(
     });
 
     // Cloudinary auto-generates a thumbnail for videos at .jpg extension
-    const thumbnailUrl = `https://res.cloudinary.com/${cloudName}/video/upload/w_400,c_scale,q_80,f_webp/${result.public_id}.jpg`;
+    const thumbnailUrl = `https://res.cloudinary.com/${cloudName}/video/upload/${result.public_id}.jpg`;
 
     return {
         url: result.secure_url,
