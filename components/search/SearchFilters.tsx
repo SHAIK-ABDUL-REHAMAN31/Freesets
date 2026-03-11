@@ -23,6 +23,8 @@ const CATEGORY_LABELS: Record<Category, string> = {
     [Category.FOOD]: 'Food',
     [Category.LOGO]: 'Logo',
     [Category.TEXTURE]: 'Texture',
+    [Category.MOVIE]:'Movie',
+
 };
 
 const AI_TOOL_LABELS: Record<AITool, string> = {

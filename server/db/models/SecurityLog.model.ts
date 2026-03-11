@@ -34,7 +34,6 @@ const SecurityLogSchema = new Schema<ISecurityLog>(
         timestamp: {
             type: Date,
             default: Date.now,
-            index: true,
         },
     },
     {

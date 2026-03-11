@@ -1,10 +1,27 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Input sanitization using isomorphic-dompurify
+// Input sanitization — pure JS, no DOM dependency (Vercel serverless safe)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import DOMPurify from 'isomorphic-dompurify';
-
 const MAX_STRING_LENGTH = 5000;
+
+/**
+ * Strip all HTML tags from a string.
+ * Decodes common HTML entities after stripping.
+ */
+function stripHtml(input: string): string {
+    return input
+        // Remove all HTML tags
+        .replace(/<[^>]*>/g, '')
+        // Decode common HTML entities
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&#x27;/g, "'")
+        .replace(/&#x2F;/g, '/')
+        .replace(/&nbsp;/g, ' ');
+}
 
 /**
  * Strip all HTML tags, trim whitespace, collapse multiple spaces, enforce max length.
@@ -12,8 +29,7 @@ const MAX_STRING_LENGTH = 5000;
 export function sanitizeString(input: string): string {
     if (typeof input !== 'string') return '';
 
-    // Purify allowing NO tags
-    const clean = DOMPurify.sanitize(input, { ALLOWED_TAGS: [] });
+    const clean = stripHtml(input);
 
     return clean
         .trim()
@@ -28,8 +44,7 @@ export function sanitizeString(input: string): string {
 export function sanitizePromptText(text: string): string {
     if (typeof text !== 'string') return '';
 
-    // Purify allowing NO tags
-    const clean = DOMPurify.sanitize(text, { ALLOWED_TAGS: [] });
+    const clean = stripHtml(text);
 
     return clean.trim().slice(0, MAX_STRING_LENGTH);
 }

@@ -4,6 +4,7 @@
 
 const allowedOrigins = [
     process.env.NEXT_PUBLIC_APP_URL,
+    'https://freesets-sage.vercel.app',
     'http://localhost:3000',
     'http://localhost:3001',
 ].filter(Boolean) as string[];
