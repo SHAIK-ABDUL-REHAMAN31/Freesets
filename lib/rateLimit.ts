@@ -9,15 +9,17 @@ interface RateLimitEntry {
 
 const rateLimitMap = new Map<string, RateLimitEntry>();
 
-// Periodic cleanup — remove expired entries every 5 minutes
-setInterval(() => {
+// Lazy cleanup — prune expired entries on each access.
+// (setInterval is NOT used because Vercel serverless functions
+//  do not support persistent background timers.)
+function pruneExpired(): void {
     const now = Date.now();
     Array.from(rateLimitMap.entries()).forEach(([key, entry]) => {
         if (now >= entry.resetTime) {
             rateLimitMap.delete(key);
         }
     });
-}, 5 * 60 * 1000);
+}
 
 interface RateLimitOptions {
     /** Maximum requests allowed in the window */
@@ -37,6 +39,9 @@ interface RateLimitResult {
 export function rateLimit(options: RateLimitOptions): RateLimitResult {
     const { limit, windowMs, identifier } = options;
     const now = Date.now();
+
+    // Opportunistic cleanup — keeps memory bounded without a timer
+    if (rateLimitMap.size > 500) pruneExpired();
     const entry = rateLimitMap.get(identifier);
 
     // No entry or window expired — create fresh entry
