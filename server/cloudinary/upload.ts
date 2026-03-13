@@ -14,6 +14,8 @@ interface UploadResult {
     publicId: string;
     thumbnailUrl: string;
     cloudName: string;
+    width: number;
+    height: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,6 +56,8 @@ export async function uploadImage(
         publicId: result.public_id,
         thumbnailUrl: getThumbnailUrl(result.public_id, cloudName),
         cloudName,
+        width: result.width,
+        height: result.height,
     };
 }
 
@@ -103,5 +107,7 @@ export async function uploadVideo(
         publicId: result.public_id,
         thumbnailUrl,
         cloudName,
+        width: result.width || 0,
+        height: result.height || 0,
     };
 }

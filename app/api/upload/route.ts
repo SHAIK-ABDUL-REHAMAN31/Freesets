@@ -27,6 +27,8 @@ interface UploadResponse {
     publicId: string;
     thumbnailUrl: string;
     cloudName: string;
+    width: number;
+    height: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -134,6 +136,8 @@ export async function POST(req: Request) {
                     publicId: result.publicId,
                     thumbnailUrl: result.thumbnailUrl,
                     cloudName: result.cloudName,
+                    width: result.width,
+                    height: result.height,
                 },
             },
             { status: 201, headers },

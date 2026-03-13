@@ -48,6 +48,8 @@ export interface IPrompt {
     cloudinaryPublicId: string;
     cloudName: string;
     thumbnailUrl: string;
+    imageWidth?: number;
+    imageHeight?: number;
     category: (typeof CATEGORY_VALUES)[number];
     subCategory: string;
     styleTags: string[];
@@ -103,6 +105,14 @@ const PromptSchema = new Schema<IPromptDocument>(
         thumbnailUrl: {
             type: String,
             required: [true, 'Thumbnail URL is required'],
+        },
+        imageWidth: {
+            type: Number,
+            required: false,
+        },
+        imageHeight: {
+            type: Number,
+            required: false,
         },
         category: {
             type: String,

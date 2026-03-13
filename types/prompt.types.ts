@@ -51,6 +51,8 @@ export interface IPrompt {
     outputVideoUrl?: string;
     cloudinaryPublicId: string;
     thumbnailUrl: string;
+    imageWidth?: number;
+    imageHeight?: number;
     category: Category;
     subCategory: string;
     styleTags: string[];
@@ -74,6 +76,8 @@ export interface IPromptCard {
     title: string;
     promptText?: string;
     thumbnailUrl: string;
+    imageWidth?: number;
+    imageHeight?: number;
     outputVideoUrl?: string;
     category: Category;
     subCategory: string;

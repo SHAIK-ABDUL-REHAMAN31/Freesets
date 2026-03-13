@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Masonry from 'react-masonry-css';
 import { cn } from '@/lib/utils';
 import { IPromptCard } from '@/types/prompt.types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,29 +48,41 @@ function SpinnerIcon({ className }: { className?: string }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Skeleton card — matches the masonry layout
+// Masonry breakpoints — Pinterest-style column config
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SkeletonCard({ heightClass = "h-[300px]" }: { heightClass?: string }) {
+const breakpointColumns = {
+    default: 4,   // 4 columns on very large screens
+    1536: 4,      // 4 columns on 2xl
+    1280: 4,      // 4 columns on xl
+    1024: 3,      // 3 columns on lg
+    768: 2,       // 2 columns on md
+    640: 2,       // 2 columns on sm
+    480: 1,       // 1 column on mobile
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pinterest-style skeleton heights (variable to simulate masonry feel)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const skeletonHeights = [
+    280, 380, 220, 420, 300,
+    350, 260, 450, 240, 320,
+    400, 280, 360, 200, 440,
+    310, 370, 250, 290, 410,
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Skeleton card — variable heights like Pinterest loading state
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SkeletonCard({ height }: { height: number }) {
     return (
         <div
-            className={cn(
-                'rounded-2xl overflow-hidden relative break-inside-avoid w-full mb-6',
-                'bg-zinc-800/50 border border-zinc-800',
-                heightClass
-            )}
+            className="rounded-xl overflow-hidden bg-zinc-800/50 border border-zinc-800"
+            style={{ height: `${height}px` }}
         >
-            {/* Image placeholder */}
-            <Skeleton className="absolute inset-0 w-full h-full rounded-none opacity-20" />
-
-            {/* Body */}
-            <div className="relative z-10 flex flex-col h-full p-5 justify-end space-y-3">
-                <Skeleton className="h-6 w-3/4 rounded-md opacity-20" />
-                <div className="space-y-2 pb-2">
-                    <Skeleton className="h-4 w-full rounded opacity-20" />
-                    <Skeleton className="h-4 w-2/3 rounded opacity-20" />
-                </div>
-            </div>
+            <Skeleton className="w-full h-full rounded-none opacity-20" />
         </div>
     );
 }
@@ -98,18 +111,22 @@ export function PromptGrid({
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
 
-    // ── Loading state (fresh load / category switch) ────────────────────────────
+    // ── Loading state (fresh load / category switch) ────────────────────────
     if (prompts.length === 0 && isLoading) {
         return (
-            <div id="prompt-grid-loading" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <SkeletonCard key={`skeleton-${i}`} />
+            <Masonry
+                breakpointCols={breakpointColumns}
+                className="masonry-grid"
+                columnClassName="masonry-grid-column"
+            >
+                {skeletonHeights.map((h, i) => (
+                    <SkeletonCard key={`skeleton-${i}`} height={h} />
                 ))}
-            </div>
+            </Masonry>
         );
     }
 
-    // ── Empty state ─────────────────────────────────────────────────────────────
+    // ── Empty state ─────────────────────────────────────────────────────────
     if (prompts.length === 0 && !isLoading) {
         return (
             <div
@@ -138,15 +155,18 @@ export function PromptGrid({
 
     return (
         <div id="prompt-grid-container">
-            {/* ── Card grid ────────────────────────────────────────────────────── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-                {/* Prompt cards */}
+            {/* ── Masonry card grid ───────────────────────────────────────────── */}
+            <Masonry
+                breakpointCols={breakpointColumns}
+                className="masonry-grid"
+                columnClassName="masonry-grid-column"
+            >
                 {prompts.map((prompt) => (
                     <PromptCard key={prompt.id} prompt={prompt} />
                 ))}
-            </div>
+            </Masonry>
 
-            {/* ── Load more button ─────────────────────────────────────────────────── */}
+            {/* ── Load more button ─────────────────────────────────────────────── */}
             {hasMore && !isLoading && mounted && (
                 <div className="flex justify-center pt-8 pb-4">
                     <button
@@ -170,7 +190,7 @@ export function PromptGrid({
                 </div>
             )}
 
-            {/* ── Loading spinner for pagination ────────────────────────────────────── */}
+            {/* ── Loading spinner for pagination ───────────────────────────────── */}
             {isLoading && prompts.length > 0 && (
                 <div className="flex justify-center pt-6 pb-4">
                     <div className="inline-flex items-center gap-2.5 text-sm text-foreground/50">

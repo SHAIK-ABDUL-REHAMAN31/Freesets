@@ -121,7 +121,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
     // ── No query: show empty search state ────────────────────────────────────
     if (!query) {
         return (
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+            <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex flex-col items-center justify-center min-h-[60vh]">
                     <h1 className="text-3xl font-display font-bold text-white mb-2">
                         Search Freesets
@@ -145,7 +145,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
     // ── No results ───────────────────────────────────────────────────────────
     if (initialPrompts.length === 0) {
         return (
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+            <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8">
                 {/* Search bar at top so user can search again */}
                 <div className="mb-8 max-w-xl mx-auto">
                     <Suspense fallback={<div className="h-12 w-full animate-pulse rounded-lg bg-surface-card" />}>
@@ -166,7 +166,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
 
     // ── Results found ────────────────────────────────────────────────────────
     return (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8">
             {/* ── Page header ──────────────────────────────────────────────────── */}
             <div className="mb-6">
                 <h1 className="text-2xl font-display font-bold text-white mb-1">

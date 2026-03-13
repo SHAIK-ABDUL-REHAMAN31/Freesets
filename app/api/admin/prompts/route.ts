@@ -127,6 +127,8 @@ export async function POST(req: Request) {
             isFreeDownload,
             isPremium,
             status,
+            imageWidth,
+            imageHeight,
         } = body;
 
         // Basic validation
@@ -161,6 +163,8 @@ export async function POST(req: Request) {
             isFreeDownload: isFreeDownload ?? false,
             isPremium: isPremium ?? false,
             status: status || 'published',
+            imageWidth: imageWidth || undefined,
+            imageHeight: imageHeight || undefined,
         });
 
         return NextResponse.json<ApiResponse<IPrompt>>(

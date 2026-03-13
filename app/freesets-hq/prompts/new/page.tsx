@@ -91,6 +91,8 @@ export default function AddPromptPage() {
         publicId: string;
         thumbnailUrl: string;
         cloudName: string;
+        width: number;
+        height: number;
     } | null>(null);
 
     const [saving, setSaving] = useState(false);
@@ -217,6 +219,8 @@ export default function AddPromptPage() {
                 isFreeDownload,
                 isPremium,
                 status,
+                imageWidth: imageData!.width || undefined,
+                imageHeight: imageData!.height || undefined,
             };
 
             const res = await fetch('/api/admin/prompts', {

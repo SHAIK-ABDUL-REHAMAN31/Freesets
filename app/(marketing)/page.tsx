@@ -54,7 +54,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     const initialPrompts = await getInitialPrompts(params);
 
     return (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8">
             {/* ── Gallery (client component — infinite scroll + re-fetch) ───────── */}
             <Suspense fallback={<div className="mt-8 h-96 w-full animate-pulse rounded-2xl bg-surface-card" />}>
                 <HomeGallery
