@@ -132,6 +132,19 @@ export default function AddPromptPage() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        // Size validation
+        const isVideo = file.type.startsWith('video/');
+        const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+        
+        if (file.size > maxSize) {
+            setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max size: ${isVideo ? '100MB' : '10MB'}.`);
+            // Clear input
+            e.target.value = '';
+            return;
+        }
+
+        setError(''); // Clear previous error
         setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
         setUploadedData(null); // Reset previous upload
@@ -176,21 +189,56 @@ export default function AddPromptPage() {
             if (!imageData) {
                 setUploading(true);
                 const slug = CATEGORY_TO_SLUG[category];
-                const formData = new FormData();
-                formData.append('file', imageFile!);
-
-                const uploadRes = await fetch(`/api/upload?category=${slug}`, {
+                
+                // Fetch secure upload signature
+                const sigRes = await fetch('/api/upload/signature', {
                     method: 'POST',
-                    body: formData,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: slug }),
                 });
 
-                if (!uploadRes.ok) {
-                    const uploadErr = await uploadRes.json();
-                    throw new Error(uploadErr.error || 'Image upload failed');
+                if (!sigRes.ok) {
+                    const sigErr = await sigRes.json();
+                    throw new Error(sigErr.error || 'Failed to initialize upload');
                 }
 
-                const uploadJson = await uploadRes.json();
-                imageData = uploadJson.data;
+                const sigData = await sigRes.json();
+
+                // Upload directly to Cloudinary bypassing Vercel limits
+                const formData = new FormData();
+                formData.append('file', imageFile!);
+                formData.append('api_key', sigData.apiKey);
+                formData.append('timestamp', String(sigData.timestamp));
+                formData.append('signature', sigData.signature);
+                formData.append('folder', sigData.folder);
+
+                const cldRes = await fetch(
+                    `https://api.cloudinary.com/v1_1/${sigData.cloudName}/auto/upload`,
+                    { method: 'POST', body: formData }
+                );
+
+                if (!cldRes.ok) {
+                    const cldErr = await cldRes.json();
+                    throw new Error(cldErr.error?.message || 'Cloudinary upload failed');
+                }
+
+                const cldData = await cldRes.json();
+                
+                // Get extension correctly for videos vs images
+                const isVideo = imageFile!.type.startsWith('video/');
+                const thumbnailUrl = isVideo
+                    ? `https://res.cloudinary.com/${sigData.cloudName}/video/upload/${cldData.public_id}.jpg`
+                    : `https://res.cloudinary.com/${sigData.cloudName}/image/upload/c_scale,w_400,f_webp,q_80/${cldData.public_id}`;
+
+                imageData = {
+                    url: cldData.secure_url,
+                    publicId: cldData.public_id,
+                    thumbnailUrl: thumbnailUrl,
+                    cloudName: sigData.cloudName,
+                    width: cldData.width || 0,
+                    height: cldData.height || 0,
+                };
+                
                 setUploadedData(imageData);
                 setUploading(false);
             }
