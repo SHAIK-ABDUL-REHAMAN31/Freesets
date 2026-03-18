@@ -23,6 +23,18 @@ interface UploadResult {
 //
 // Uploads an image buffer to the Cloudinary account associated with `category`.
 // Images are stored in folder `freesets/{category}` inside that account.
+//
+// QUALITY STRATEGY — upload the original file completely unmodified.
+//   • quality: 'auto:best'       → Cloudinary stores at highest quality
+//   • fetch_format: 'auto'       → Cloudinary picks best format per browser
+//   • flags: 'preserve_transparency' → keeps alpha channels (PNG etc.)
+//   • format: ''                 → keep original upload format, no conversion
+//   • overwrite: false           → never overwrite originals; use unique_filename
+//   • unique_filename: true      → prevents accidental overwrites
+//
+// All display transformations (resize, DPR, format, quality) are applied
+// ONLY when building the URL at display time via transform.ts.
+// This preserves the original file forever.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function uploadImage(
@@ -39,7 +51,15 @@ export async function uploadImage(
                 folder: `freesets/${category}`,
                 ...(publicId && { public_id: publicId }),
                 resource_type: 'image',
-                overwrite: true,
+                // ── Store original at maximum quality ──────────────────────
+                quality: 'auto:best',
+                fetch_format: 'auto',
+                flags: 'preserve_transparency',
+                // No transformation on upload — keep the original
+                // Transformations are applied only at display time (URL-based)
+                use_filename: false,
+                unique_filename: true,
+                overwrite: false,
                 invalidate: true,
             },
             (error, result) => {
@@ -51,6 +71,8 @@ export async function uploadImage(
         uploadStream.end(fileBuffer);
     });
 
+    // thumbnailUrl stored in DB uses the new high-quality transform
+    // (800px · f_webp · q_100 · fl_progressive)
     return {
         url: result.secure_url,
         publicId: result.public_id,

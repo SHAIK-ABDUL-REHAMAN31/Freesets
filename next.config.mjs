@@ -1,11 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // ── Optimised Image Handling ──────────────────────────────────────────────
+    // ── Image Handling ────────────────────────────────────────────────────────
+    //
+    // WHY CUSTOM LOADER?
+    //   Next.js <Image> routes every src through /_next/image which re-compresses
+    //   the image using its own pipeline. When our src is already a Cloudinary URL
+    //   with q_100 + f_auto applied, that re-compression causes quality loss
+    //   (double compression). The custom loader returns Cloudinary URLs as-is
+    //   so only Cloudinary's transforms are applied — never doubled.
+    //
     images: {
+        loader: 'custom',
+        loaderFile: './lib/cloudinary-loader.ts',
         remotePatterns: [
             {
                 protocol: 'https',
                 hostname: 'res.cloudinary.com',
+                pathname: '/**',
             },
             {
                 protocol: 'https',
@@ -13,6 +24,8 @@ const nextConfig = {
             },
         ],
         formats: ['image/avif', 'image/webp'],
+        minimumCacheTTL: 60,
+        dangerouslyAllowSVG: false,
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     },

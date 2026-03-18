@@ -10,6 +10,7 @@ import { AIToolBadge } from './AIToolBadge';
 import { CopyButton } from './CopyButton';
 import { PromptGrid } from './PromptGrid';
 import { SidebarAd } from '@/components/ads/SidebarAd';
+import { getPreviewUrl } from '@/server/cloudinary/transform';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Icons
@@ -215,16 +216,21 @@ export function PromptDetail({
                             </video>
                         </div>
                     ) : (
-                        /* Image */
+                        /* Image — served at 1600px + q_100 + dpr_auto for retina */
                         <div className="relative w-full rounded-xl overflow-hidden bg-surface border border-surface-border">
-                            <Image
-                                src={prompt.outputImageUrl}
+                            <img
+                                src={
+                                    prompt.cloudinaryPublicId && prompt.cloudName
+                                        ? getPreviewUrl(prompt.cloudinaryPublicId, prompt.cloudName)
+                                        : prompt.outputImageUrl
+                                }
                                 alt={prompt.title}
-                                width={1200}
-                                height={800}
-                                className="w-full h-auto"
-                                priority
-                                sizes="(max-width: 1024px) 100vw, 65vw"
+                                width={prompt.imageWidth || 1600}
+                                height={prompt.imageHeight || 1200}
+                                loading="eager"
+                                decoding="sync"
+                                className="w-full h-auto block rounded-xl"
+                                style={{ imageRendering: 'auto' }}
                             />
                         </div>
                     )}

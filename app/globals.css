@@ -227,3 +227,28 @@ h6 {
     --radius: 0.5rem;
   }
 }
+
+/* ─── High-Quality Image Rendering ──────────────────────────────────────── */
+/* Prevents the browser from blurring or downsampling images on display.     */
+
+img {
+  /* bicubic is the highest quality scaling algorithm available cross-browser */
+  -ms-interpolation-mode: bicubic;
+  /* Let the browser use its highest quality algorithm (matches CSS spec)     */
+  image-rendering: auto;
+}
+
+/* Prompt cards — GPU accelerated to prevent scroll-blurring in Chrome/Safari */
+.prompt-card img {
+  /* translateZ(0) promotes to its own compositor layer (GPU-accelerated).   */
+  /* This prevents subpixel blurring during scroll on HiDPI screens.         */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Dark placeholder shown while the high-res card image is loading.          */
+/* Prevents flash of white/empty space before the image arrives.             */
+.prompt-card .image-wrapper {
+  background-color: #1a1a1a;
+}

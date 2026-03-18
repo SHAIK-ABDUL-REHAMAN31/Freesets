@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { IPromptCard } from '@/types/prompt.types';
+import { getCardUrl } from '@/server/cloudinary/transform';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Icons
@@ -24,8 +25,6 @@ function CheckIcon({ className }: { className?: string }) {
         </svg>
     );
 }
-
-
 
 function DownloadIcon({ className }: { className?: string }) {
     return (
@@ -49,8 +48,19 @@ export function PromptCard({ prompt }: PromptCardProps) {
     const fallbackImage = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
 
     const [imageLoaded, setImageLoaded] = useState(false);
-    const [imgSrc, setImgSrc] = useState(prompt.thumbnailUrl || fallbackImage);
     const [copied, setCopied] = useState(false);
+
+    // Resolve the best image URL:
+    //   • If the card already has a cloudinaryPublicId + cloudName → build
+    //     the high-quality getCardUrl (800px · f_auto · q_100 · dpr_2.0)
+    //   • Otherwise fall back to whatever thumbnailUrl was stored in the DB
+    //     (still better than nothing)
+    const resolvedSrc =
+        prompt.cloudinaryPublicId && prompt.cloudName
+            ? getCardUrl(prompt.cloudinaryPublicId, prompt.cloudName)
+            : prompt.thumbnailUrl || fallbackImage;
+
+    const [imgSrc, setImgSrc] = useState(resolvedSrc);
 
     const handleCopy = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -64,30 +74,43 @@ export function PromptCard({ prompt }: PromptCardProps) {
     };
 
     return (
-        <div className="pin-card group relative w-full overflow-hidden rounded-xl cursor-pointer">
-            {/* Shimmer placeholder while loading */}
+        <div className="pin-card group relative w-full overflow-hidden rounded-xl cursor-pointer prompt-card">
+
+            {/* ── Dark shimmer placeholder while full-res image loads ────────── */}
             {!imageLoaded && (
-                <div className="absolute inset-0 animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
+                <div
+                    className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900 animate-pulse rounded-xl"
+                    style={{
+                        aspectRatio: `${prompt.imageWidth || 1} / ${prompt.imageHeight || 1}`,
+                    }}
+                />
             )}
 
-            {/* The image — h-auto keeps the original aspect ratio */}
-            <img
-                src={imgSrc}
-                alt={prompt.title}
-                width={prompt.imageWidth || 400}
-                height={prompt.imageHeight || 400}
-                className={cn(
-                    'w-full h-auto block transition-transform duration-500 ease-out group-hover:scale-105',
-                    imageLoaded ? 'opacity-100' : 'opacity-0'
-                )}
-                loading="lazy"
-                onLoad={() => setImageLoaded(true)}
-                onError={() => setImgSrc(fallbackImage)}
-            />
+            {/* ── The image — plain <img> tag so Next.js pipeline is bypassed ── */}
+            {/* We use getCardUrl which already applies the best Cloudinary         */}
+            {/* transformation (q_100, f_auto, dpr_2.0, w_800, fl_progressive).    */}
+            {/* A Next.js <Image> would re-compress on top of that = quality loss. */}
+            <div className="image-wrapper w-full">
+                <img
+                    src={imgSrc}
+                    alt={prompt.title}
+                    width={prompt.imageWidth || 800}
+                    height={prompt.imageHeight || 1000}
+                    loading="lazy"
+                    decoding="async"
+                    onLoad={() => setImageLoaded(true)}
+                    onError={() => setImgSrc(fallbackImage)}
+                    className={cn(
+                        'w-full h-auto block transition-all duration-500 ease-out',
+                        'group-hover:scale-105',
+                        imageLoaded ? 'opacity-100' : 'opacity-0',
+                    )}
+                    style={{ imageRendering: 'auto', transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
+                />
+            </div>
 
             {/* ── Hover overlay (Pinterest gradient) ─── */}
             <div className="pin-card-overlay rounded-xl" />
-
 
             {/* ── Download — top right on hover (if free) ─── */}
             {prompt.isFreeDownload && (
@@ -102,7 +125,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
                 </div>
             )}
 
-            {/* ── Title + Prompt text + Copy button — inside overlay, visible only on hover ─── */}
+            {/* ── Title + Prompt text + Copy button — visible on hover ────────── */}
             <div className="pin-card-actions">
                 {/* Title */}
                 <h3 className="text-sm font-semibold text-white leading-snug line-clamp-1 mb-0.5">

@@ -50,6 +50,8 @@ export interface IPrompt {
     outputImageUrl: string;
     outputVideoUrl?: string;
     cloudinaryPublicId: string;
+    /** Cloudinary account cloud_name — needed to build direct transform URLs */
+    cloudName?: string;
     thumbnailUrl: string;
     imageWidth?: number;
     imageHeight?: number;
@@ -76,6 +78,10 @@ export interface IPromptCard {
     title: string;
     promptText?: string;
     thumbnailUrl: string;
+    /** Cloudinary public_id — used to build high-quality card URLs on the fly */
+    cloudinaryPublicId?: string;
+    /** Cloudinary account cloud_name — paired with cloudinaryPublicId */
+    cloudName?: string;
     imageWidth?: number;
     imageHeight?: number;
     outputVideoUrl?: string;
