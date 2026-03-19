@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { IPromptCard } from '@/types/prompt.types';
-import { getCardUrl } from '@/server/cloudinary/transform';
+import { getCardUrl, getBlurPlaceholderUrl } from '@/server/cloudinary/transform';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Icons
@@ -47,20 +47,65 @@ export interface PromptCardProps {
 export function PromptCard({ prompt }: PromptCardProps) {
     const fallbackImage = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
 
-    const [imageLoaded, setImageLoaded] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    // Resolve the best image URL:
-    //   • If the card already has a cloudinaryPublicId + cloudName → build
-    //     the high-quality getCardUrl (800px · f_auto · q_100 · dpr_2.0)
-    //   • Otherwise fall back to whatever thumbnailUrl was stored in the DB
-    //     (still better than nothing)
-    const resolvedSrc =
-        prompt.cloudinaryPublicId && prompt.cloudName
-            ? getCardUrl(prompt.cloudinaryPublicId, prompt.cloudName)
-            : prompt.thumbnailUrl || fallbackImage;
+    // ── Intersection Observer — only load when card enters viewport ──────
+    const cardRef = useRef<HTMLDivElement>(null);
+    const [isInView, setIsInView] = useState(false);
 
-    const [imgSrc, setImgSrc] = useState(resolvedSrc);
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsInView(true);
+                    observer.disconnect(); // stop observing once visible
+                }
+            },
+            {
+                rootMargin: '200px', // start loading 200px before card enters viewport
+            }
+        );
+        if (cardRef.current) observer.observe(cardRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // ── Two-stage image loading ─────────────────────────────────────────
+    // Stage 1: Tiny blurred placeholder (loads in <100ms)
+    // Stage 2: Full card image (swapped in with smooth fade)
+
+    const hasCloudinary = prompt.cloudinaryPublicId && prompt.cloudName;
+
+    const blurSrc = hasCloudinary
+        ? getBlurPlaceholderUrl(prompt.cloudinaryPublicId!, prompt.cloudName!)
+        : prompt.thumbnailUrl || fallbackImage;
+
+    const fullSrc = hasCloudinary
+        ? getCardUrl(prompt.cloudinaryPublicId!, prompt.cloudName!)
+        : prompt.thumbnailUrl || fallbackImage;
+
+    const [imageSrc, setImageSrc] = useState(blurSrc);
+    const [isFullLoaded, setIsFullLoaded] = useState(false);
+
+    // Preload full image in background once the card is in view
+    useEffect(() => {
+        if (!isInView) return;
+
+        const img = new Image();
+        img.src = fullSrc;
+        img.onload = () => {
+            setImageSrc(fullSrc);
+            setIsFullLoaded(true);
+        };
+        img.onerror = () => {
+            setImageSrc(fallbackImage);
+            setIsFullLoaded(true);
+        };
+
+        return () => {
+            img.onload = null;
+            img.onerror = null;
+        };
+    }, [isInView, fullSrc]);
 
     const handleCopy = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -74,94 +119,98 @@ export function PromptCard({ prompt }: PromptCardProps) {
     };
 
     return (
-        <div className="pin-card group relative w-full overflow-hidden rounded-xl cursor-pointer prompt-card">
+        <div
+            ref={cardRef}
+            className="pin-card group relative w-full overflow-hidden rounded-xl cursor-pointer prompt-card"
+        >
+            {isInView ? (
+                <>
+                    {/* ── The image — two-stage: blur placeholder → full quality ── */}
+                    <div className="image-wrapper w-full">
+                        <img
+                            src={imageSrc}
+                            alt={prompt.title}
+                            width={prompt.imageWidth || 800}
+                            height={prompt.imageHeight || 1000}
+                            decoding="async"
+                            className={cn(
+                                'w-full h-auto block transition-all duration-500 ease-out',
+                                'group-hover:scale-105',
+                                isFullLoaded
+                                    ? 'blur-0 scale-100 opacity-100'
+                                    : 'blur-md scale-105 opacity-100', // blurry while loading
+                            )}
+                            style={{
+                                imageRendering: 'auto',
+                                transform: isFullLoaded ? 'translateZ(0)' : 'translateZ(0) scale(1.05)',
+                                backfaceVisibility: 'hidden',
+                            }}
+                        />
+                    </div>
 
-            {/* ── Dark shimmer placeholder while full-res image loads ────────── */}
-            {!imageLoaded && (
+                    {/* ── Hover overlay (Pinterest gradient) ─── */}
+                    <div className="pin-card-overlay rounded-xl" />
+
+                    {/* ── Download — top right on hover (if free) ─── */}
+                    {prompt.isFreeDownload && (
+                        <div className="pin-card-download">
+                            <button
+                                className="flex items-center justify-center w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zinc-800 transition-colors shadow-md"
+                                title="Download"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <DownloadIcon className="size-4" />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* ── Title + Prompt text + Copy button — visible on hover ─── */}
+                    <div className="pin-card-actions">
+                        {/* Title */}
+                        <h3 className="text-sm font-semibold text-white leading-snug line-clamp-1 mb-0.5">
+                            {prompt.title}
+                        </h3>
+
+                        {/* Prompt text */}
+                        {prompt.promptText && (
+                            <p className="text-[11px] text-white/70 leading-relaxed line-clamp-2 mb-2">
+                                {prompt.promptText}
+                            </p>
+                        )}
+
+                        {/* Copy button */}
+                        <button
+                            onClick={handleCopy}
+                            className={cn(
+                                'w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 shadow-lg',
+                                copied
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-white text-zinc-900 hover:bg-zinc-100'
+                            )}
+                        >
+                            {copied ? (
+                                <>
+                                    <CheckIcon className="size-3.5" />
+                                    Copied!
+                                </>
+                            ) : (
+                                <>
+                                    <CopyIcon className="size-3.5" />
+                                    Copy Prompt
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </>
+            ) : (
+                /* ── Placeholder with correct dimensions while off screen ──── */
                 <div
-                    className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900 animate-pulse rounded-xl"
+                    className="bg-zinc-900 rounded-xl w-full"
                     style={{
-                        aspectRatio: `${prompt.imageWidth || 1} / ${prompt.imageHeight || 1}`,
+                        aspectRatio: `${prompt.imageWidth || 3} / ${prompt.imageHeight || 4}`,
                     }}
                 />
             )}
-
-            {/* ── The image — plain <img> tag so Next.js pipeline is bypassed ── */}
-            {/* We use getCardUrl which already applies the best Cloudinary         */}
-            {/* transformation (q_100, f_auto, dpr_2.0, w_800, fl_progressive).    */}
-            {/* A Next.js <Image> would re-compress on top of that = quality loss. */}
-            <div className="image-wrapper w-full">
-                <img
-                    src={imgSrc}
-                    alt={prompt.title}
-                    width={prompt.imageWidth || 800}
-                    height={prompt.imageHeight || 1000}
-                    loading="lazy"
-                    decoding="async"
-                    onLoad={() => setImageLoaded(true)}
-                    onError={() => setImgSrc(fallbackImage)}
-                    className={cn(
-                        'w-full h-auto block transition-all duration-500 ease-out',
-                        'group-hover:scale-105',
-                        imageLoaded ? 'opacity-100' : 'opacity-0',
-                    )}
-                    style={{ imageRendering: 'auto', transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
-                />
-            </div>
-
-            {/* ── Hover overlay (Pinterest gradient) ─── */}
-            <div className="pin-card-overlay rounded-xl" />
-
-            {/* ── Download — top right on hover (if free) ─── */}
-            {prompt.isFreeDownload && (
-                <div className="pin-card-download">
-                    <button
-                        className="flex items-center justify-center w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zinc-800 transition-colors shadow-md"
-                        title="Download"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <DownloadIcon className="size-4" />
-                    </button>
-                </div>
-            )}
-
-            {/* ── Title + Prompt text + Copy button — visible on hover ────────── */}
-            <div className="pin-card-actions">
-                {/* Title */}
-                <h3 className="text-sm font-semibold text-white leading-snug line-clamp-1 mb-0.5">
-                    {prompt.title}
-                </h3>
-
-                {/* Prompt text */}
-                {prompt.promptText && (
-                    <p className="text-[11px] text-white/70 leading-relaxed line-clamp-2 mb-2">
-                        {prompt.promptText}
-                    </p>
-                )}
-
-                {/* Copy button */}
-                <button
-                    onClick={handleCopy}
-                    className={cn(
-                        'w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 shadow-lg',
-                        copied
-                            ? 'bg-emerald-500 text-white'
-                            : 'bg-white text-zinc-900 hover:bg-zinc-100'
-                    )}
-                >
-                    {copied ? (
-                        <>
-                            <CheckIcon className="size-3.5" />
-                            Copied!
-                        </>
-                    ) : (
-                        <>
-                            <CopyIcon className="size-3.5" />
-                            Copy Prompt
-                        </>
-                    )}
-                </button>
-            </div>
         </div>
     );
 }

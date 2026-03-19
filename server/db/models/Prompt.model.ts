@@ -172,11 +172,17 @@ const PromptSchema = new Schema<IPromptDocument>(
 // Indexes
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Listing pages: filter by category + status
-PromptSchema.index({ category: 1, status: 1 });
+// Category filtering + newest sort (main browse page query)
+PromptSchema.index({ category: 1, status: 1, createdAt: -1 });
+
+// Popular / most-copied sort
+PromptSchema.index({ status: 1, copyCount: -1 });
 
 // Feed / admin queue: newest pending or published first
 PromptSchema.index({ status: 1, createdAt: -1 });
+
+// Most-downloaded sort
+PromptSchema.index({ status: 1, downloadCount: -1 });
 
 // Tag-based browsing
 PromptSchema.index({ styleTags: 1 });

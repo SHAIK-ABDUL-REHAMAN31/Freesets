@@ -1,8 +1,24 @@
 import { create } from 'zustand';
-import type { PromptFilters, Category, AITool, AspectRatio } from '@/types/prompt.types';
+import type { PromptFilters, Category, AITool, AspectRatio, IPromptCard } from '@/types/prompt.types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Filter Store — manages the active prompt filters
+// Prompt Cache — stores results per category to avoid redundant API calls
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface PromptCacheEntry {
+    prompts: IPromptCard[];
+    fetchedAt: number; // timestamp
+    total: number;
+}
+
+interface PromptCache {
+    [category: string]: PromptCacheEntry;
+}
+
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Filter Store — manages the active prompt filters + category cache
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface FilterState {
@@ -16,6 +32,15 @@ interface FilterState {
 
     /** Number of filters that are actively set (non-default) */
     activeFilterCount: () => number;
+
+    // ── Category Cache ──────────────────────────────────────────────────
+    promptCache: PromptCache;
+
+    /** Store prompts for a category in cache */
+    setCacheForCategory: (category: string, prompts: IPromptCard[], total: number) => void;
+
+    /** Get cached prompts for a category (returns null if expired or missing) */
+    getCacheForCategory: (category: string) => PromptCacheEntry | null;
 }
 
 const DEFAULT_FILTERS: PromptFilters = {
@@ -53,6 +78,31 @@ export const useFilterStore = create<FilterState>((set, get) => ({
         if (filters.sortBy) count++;
 
         return count;
+    },
+
+    // ── Category Cache ──────────────────────────────────────────────────
+    promptCache: {},
+
+    setCacheForCategory: (category, prompts, total) =>
+        set((s) => ({
+            promptCache: {
+                ...s.promptCache,
+                [category]: {
+                    prompts,
+                    fetchedAt: Date.now(),
+                    total,
+                },
+            },
+        })),
+
+    getCacheForCategory: (category) => {
+        const entry = get().promptCache[category];
+        if (!entry) return null;
+
+        // Expired — treat as cache miss
+        if (Date.now() - entry.fetchedAt > CACHE_DURATION) return null;
+
+        return entry;
     },
 }));
 

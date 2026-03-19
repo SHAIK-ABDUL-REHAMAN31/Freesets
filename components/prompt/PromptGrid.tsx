@@ -66,10 +66,10 @@ const breakpointColumns = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const skeletonHeights = [
-    280, 380, 220, 420, 300,
-    350, 260, 450, 240, 320,
-    400, 280, 360, 200, 440,
-    310, 370, 250, 290, 410,
+    300, 420, 250, 380, 310,
+    450, 270, 400, 340, 480,
+    290, 360, 220, 410, 330,
+    460, 240, 370, 280, 440,
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -94,6 +94,7 @@ function SkeletonCard({ height }: { height: number }) {
 export interface PromptGridProps {
     prompts: IPromptCard[];
     isLoading: boolean;
+    isTransitioning?: boolean; // True when switching categories (show skeletons)
     hasMore: boolean;
     onLoadMore: () => void;
 }
@@ -105,14 +106,15 @@ export interface PromptGridProps {
 export function PromptGrid({
     prompts,
     isLoading,
+    isTransitioning = false,
     hasMore,
     onLoadMore,
 }: PromptGridProps) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
 
-    // ── Loading state (fresh load / category switch) ────────────────────────
-    if (prompts.length === 0 && isLoading) {
+    // ── Skeleton state: transitioning between categories OR fresh load ───
+    if (isTransitioning || (prompts.length === 0 && isLoading)) {
         return (
             <Masonry
                 breakpointCols={breakpointColumns}
@@ -120,7 +122,11 @@ export function PromptGrid({
                 columnClassName="masonry-grid-column"
             >
                 {skeletonHeights.map((h, i) => (
-                    <SkeletonCard key={`skeleton-${i}`} height={h} />
+                    <div
+                        key={`skeleton-${i}`}
+                        className="rounded-xl bg-gray-900 animate-pulse mb-3"
+                        style={{ height: `${h}px` }}
+                    />
                 ))}
             </Masonry>
         );

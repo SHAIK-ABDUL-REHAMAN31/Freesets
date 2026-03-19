@@ -4,6 +4,30 @@ import type { PromptFiltersInput } from '@/server/validators/prompt.validator';
 import type { FilterQuery, SortOrder } from 'mongoose';
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Card fields — only fetch what the grid cards actually need
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CARD_FIELDS = [
+    'title',
+    'promptText',
+    'outputImageUrl',
+    'thumbnailUrl',
+    'cloudinaryPublicId',
+    'cloudName',
+    'category',
+    'aiTools',
+    'aspectRatio',
+    'isFreeDownload',
+    'isPremium',
+    'copyCount',
+    'downloadCount',
+    'imageWidth',
+    'imageHeight',
+    'status',
+    'createdAt',
+].join(' ');
+
+// ─────────────────────────────────────────────────────────────────────────────
 // getPrompts — paginated, filtered listing
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -42,16 +66,16 @@ export async function getPrompts(
     };
     const sort = sortMap[filters.sortBy ?? 'newest'];
 
-    // Exclude promptText from list queries (lightweight cards)
     const skip = (page - 1) * limit;
 
     const [prompts, total] = await Promise.all([
         Prompt.find(query)
-            .select('-negativePrompt -rejectionReason')
+            .lean()                // returns plain JS objects — 2x faster
+            .select(CARD_FIELDS)   // only fetch fields needed for cards
             .sort(sort)
             .skip(skip)
             .limit(limit)
-            .lean(),
+            .maxTimeMS(5000),      // 5s timeout — fail fast on slow queries
         Prompt.countDocuments(query),
     ]);
 
@@ -90,11 +114,12 @@ export async function searchPrompts(
 
     const [prompts, total] = await Promise.all([
         Prompt.find(filter)
-            .select('-negativePrompt -rejectionReason')
+            .lean()
+            .select(CARD_FIELDS)
             .sort({ score: { $meta: 'textScore' }, createdAt: -1 })
             .skip(skip)
             .limit(limit)
-            .lean(),
+            .maxTimeMS(5000),
         Prompt.countDocuments(filter),
     ]);
 

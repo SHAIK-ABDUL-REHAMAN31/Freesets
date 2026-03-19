@@ -104,7 +104,16 @@ export async function GET(req: NextRequest) {
                 data: prompts as unknown as IPromptCard[],
                 pagination,
             },
-            { status: 200, headers },
+            {
+                status: 200,
+                headers: {
+                    ...headers,
+                    'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+                    // Cache for 60 seconds on Vercel Edge
+                    // Serve stale for 5 minutes while revalidating
+                    // Repeat requests are INSTANT from cache
+                },
+            },
         );
     } catch (error) {
         return handleApiError(error);

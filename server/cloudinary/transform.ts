@@ -7,8 +7,8 @@
 // Format: https://res.cloudinary.com/{cloudName}/image/upload/{transforms}/{publicId}
 //
 // Quality strategy:
-//   - ALL display transforms use q_100 (zero compression)
-//   - Cards use w_800 + dpr_2.0 → effective 1600px for retina screens
+//   - Cards use w_600 + q_85 + progressive → sharp, fast, 60% smaller
+//   - Blur placeholder uses w_20 + q_30 + blur → instant LQIP
 //   - Preview uses w_1600 + dpr_auto → up to 3200px on 2x displays
 //   - Downloads use the original file where possible
 // ─────────────────────────────────────────────────────────────────────────────
@@ -16,28 +16,42 @@
 const BASE = 'https://res.cloudinary.com';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// getThumbnailUrl  — 800px wide, WebP, q_100, progressive
+// getBlurPlaceholderUrl — tiny blurred placeholder (LQIP)
+//
+// c_scale,w_20 → only 20px wide (tiny file — loads in <50ms)
+// f_webp       → modern format, smallest possible file
+// q_30         → low quality (it's just a placeholder)
+// e_blur:200   → heavily blurred — CSS upscales it to fill the card
+//
+// Gives instant visual feedback while the real image loads in background.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function getBlurPlaceholderUrl(publicId: string, cloudName: string): string {
+    return `${BASE}/${cloudName}/image/upload/c_scale,w_20,f_webp,q_30,e_blur:200/${publicId}`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// getThumbnailUrl  — 600px wide, WebP, q_85, progressive
 // Used as a backward-compatible alias; prefer getCardUrl for new code.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getThumbnailUrl(publicId: string, cloudName: string): string {
-    return `${BASE}/${cloudName}/image/upload/c_scale,w_800,f_webp,q_100,fl_progressive/${publicId}`;
+    return `${BASE}/${cloudName}/image/upload/c_scale,w_600,f_webp,q_85,fl_progressive/${publicId}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // getCardUrl  — masonry grid card image
 //
-// c_scale,w_800 → scale to 800px (logical), keeps original aspect ratio
-// f_auto        → Cloudinary picks best format per browser
-//                 (AVIF › WebP › JPEG — always highest quality for that browser)
-// q_100         → zero compression / maximum quality
-// fl_progressive→ progressive load (user sees image top-to-bottom immediately)
-// dpr_2.0       → serves 1600px physical pixels for retina/HiDPI screens
-//                 (iPhone, MacBook Retina, 4K monitors)
+// c_scale,w_600  → scale to 600px — sweet spot for grid cards
+// f_webp         → WebP format — smallest file, great quality
+// q_85           → 85% quality — visually indistinguishable from q_100
+//                   but 60% smaller file size → loads much faster
+// fl_progressive → progressive load (image renders top-to-bottom
+//                   instead of waiting for the full file)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getCardUrl(publicId: string, cloudName: string): string {
-    return `${BASE}/${cloudName}/image/upload/c_scale,w_800,f_auto,q_100,fl_progressive,dpr_2.0/${publicId}`;
+    return `${BASE}/${cloudName}/image/upload/c_scale,w_600,f_webp,q_85,fl_progressive/${publicId}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
