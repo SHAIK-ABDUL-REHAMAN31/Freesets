@@ -48,6 +48,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
     const fallbackImage = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
 
     const [copied, setCopied] = useState(false);
+    const [isMobileActive, setIsMobileActive] = useState(false);
 
     // ── Intersection Observer — only load when card enters viewport ──────
     const cardRef = useRef<HTMLDivElement>(null);
@@ -121,7 +122,12 @@ export function PromptCard({ prompt }: PromptCardProps) {
     return (
         <div
             ref={cardRef}
-            className="pin-card group relative w-full overflow-hidden rounded-xl cursor-pointer prompt-card"
+            className={cn(
+                "pin-card group relative w-full overflow-hidden rounded-xl cursor-pointer prompt-card",
+                isMobileActive && "force-active"
+            )}
+            onClick={() => setIsMobileActive((prev) => !prev)}
+            onMouseLeave={() => setIsMobileActive(false)}
         >
             {isInView ? (
                 <>
@@ -136,6 +142,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
                             className={cn(
                                 'w-full h-auto block transition-all duration-500 ease-out',
                                 'group-hover:scale-105',
+                                isMobileActive && 'scale-105',
                                 isFullLoaded
                                     ? 'blur-0 scale-100 opacity-100'
                                     : 'blur-md scale-105 opacity-100', // blurry while loading

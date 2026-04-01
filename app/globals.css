@@ -115,8 +115,15 @@ h6 {
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
-.pin-card:hover .pin-card-overlay {
+@media (hover: hover) {
+  .pin-card:hover .pin-card-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+.pin-card.force-active .pin-card-overlay {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .pin-card-actions {
@@ -129,12 +136,18 @@ h6 {
   transition: all 0.2s ease;
   pointer-events: none;
 }
-.pin-card:hover .pin-card-actions {
+@media (hover: hover) {
+  .pin-card:hover .pin-card-actions {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+.pin-card.force-active .pin-card-actions {
   transform: translateY(0);
   opacity: 1;
   pointer-events: auto;
 }
-
 
 .pin-card-download {
   position: absolute;
@@ -145,7 +158,14 @@ h6 {
   transition: all 0.2s ease;
   pointer-events: none;
 }
-.pin-card:hover .pin-card-download {
+@media (hover: hover) {
+  .pin-card:hover .pin-card-download {
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+.pin-card.force-active .pin-card-download {
   transform: scale(1);
   opacity: 1;
   pointer-events: auto;
