@@ -7,7 +7,7 @@
 // Format: https://res.cloudinary.com/{cloudName}/image/upload/{transforms}/{publicId}
 //
 // Quality strategy:
-//   - Cards use w_600 + q_85 + progressive → sharp, fast, 60% smaller
+//   - Cards use w_1200 + q_100 + progressive → maximum visual quality
 //   - Blur placeholder uses w_20 + q_30 + blur → instant LQIP
 //   - Preview uses w_1600 + dpr_auto → up to 3200px on 2x displays
 //   - Downloads use the original file where possible
@@ -31,27 +31,26 @@ export function getBlurPlaceholderUrl(publicId: string, cloudName: string): stri
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// getThumbnailUrl  — 600px wide, WebP, q_85, progressive
+// getThumbnailUrl  — 1200px wide, WebP, q_100, progressive
 // Used as a backward-compatible alias; prefer getCardUrl for new code.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getThumbnailUrl(publicId: string, cloudName: string): string {
-    return `${BASE}/${cloudName}/image/upload/c_scale,w_600,f_webp,q_85,fl_progressive/${publicId}`;
+    return `${BASE}/${cloudName}/image/upload/c_scale,w_1200,f_webp,q_100,fl_progressive/${publicId}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // getCardUrl  — masonry grid card image
 //
-// c_scale,w_600  → scale to 600px — sweet spot for grid cards
-// f_webp         → WebP format — smallest file, great quality
-// q_85           → 85% quality — visually indistinguishable from q_100
-//                   but 60% smaller file size → loads much faster
+// c_scale,w_1200 → scale to 1200px — high-res for sharp grid cards
+// f_webp         → WebP format — modern, efficient, great quality
+// q_100          → maximum quality — zero visible compression
 // fl_progressive → progressive load (image renders top-to-bottom
 //                   instead of waiting for the full file)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getCardUrl(publicId: string, cloudName: string): string {
-    return `${BASE}/${cloudName}/image/upload/c_scale,w_600,f_webp,q_85,fl_progressive/${publicId}`;
+    return `${BASE}/${cloudName}/image/upload/c_scale,w_1200,f_webp,q_100,fl_progressive/${publicId}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -15,27 +15,27 @@ export const CLOUDINARY_FOLDERS = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const IMAGE_TRANSFORMS = {
-    /** Gallery grid card — fast, small */
+    /** Gallery grid card — maximum quality */
     THUMBNAIL: {
-        width: 400,
-        crop: 'scale',
-        quality: 80,
-        fetch_format: 'auto',
-    },
-
-    /** Full-screen preview / lightbox */
-    PREVIEW: {
         width: 1200,
         crop: 'scale',
-        quality: 90,
+        quality: 100,
         fetch_format: 'auto',
     },
 
-    /** Free-tier download — watermarked overlay at 800 px */
-    FREE_DOWNLOAD: {
-        width: 800,
+    /** Full-screen preview / lightbox — maximum quality */
+    PREVIEW: {
+        width: 2400,
         crop: 'scale',
-        quality: 85,
+        quality: 100,
+        fetch_format: 'auto',
+    },
+
+    /** Free-tier download — watermarked overlay, maximum quality */
+    FREE_DOWNLOAD: {
+        width: 1600,
+        crop: 'scale',
+        quality: 100,
         fetch_format: 'auto',
         overlay: {
             public_id: 'freesets/watermark',
@@ -48,7 +48,7 @@ export const IMAGE_TRANSFORMS = {
 
     /** Pro / Business download — original quality, no watermark */
     PRO_DOWNLOAD: {
-        quality: 'auto',
+        quality: 100,
         fetch_format: 'auto',
     },
 } as const;

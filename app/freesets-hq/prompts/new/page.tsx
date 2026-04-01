@@ -228,7 +228,7 @@ export default function AddPromptPage() {
                 const isVideo = imageFile!.type.startsWith('video/');
                 const thumbnailUrl = isVideo
                     ? `https://res.cloudinary.com/${sigData.cloudName}/video/upload/${cldData.public_id}.jpg`
-                    : `https://res.cloudinary.com/${sigData.cloudName}/image/upload/c_scale,w_400,f_webp,q_80/${cldData.public_id}`;
+                    : `https://res.cloudinary.com/${sigData.cloudName}/image/upload/c_scale,w_1200,f_webp,q_100,fl_progressive/${cldData.public_id}`;
 
                 imageData = {
                     url: cldData.secure_url,

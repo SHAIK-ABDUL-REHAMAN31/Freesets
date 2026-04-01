@@ -71,8 +71,8 @@ export async function uploadImage(
         uploadStream.end(fileBuffer);
     });
 
-    // thumbnailUrl stored in DB uses the new high-quality transform
-    // (800px · f_webp · q_100 · fl_progressive)
+    // thumbnailUrl stored in DB uses the new maximum-quality transform
+    // (1200px · f_webp · q_100 · fl_progressive)
     return {
         url: result.secure_url,
         publicId: result.public_id,
