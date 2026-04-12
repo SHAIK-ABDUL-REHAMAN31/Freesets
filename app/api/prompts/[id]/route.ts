@@ -53,7 +53,6 @@ export async function GET(
             promptText: prompt.promptText,
             negativePrompt: prompt.negativePrompt,
             outputImageUrl: prompt.outputImageUrl,
-            outputVideoUrl: prompt.outputVideoUrl,
             cloudinaryPublicId: prompt.cloudinaryPublicId,
             thumbnailUrl: prompt.thumbnailUrl,
             category: prompt.category as unknown as IPromptResponse['category'],

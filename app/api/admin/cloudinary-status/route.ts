@@ -23,7 +23,6 @@ export async function OPTIONS(req: Request) {
 const CATEGORY_LABELS: Record<string, string> = {
     'ai-images': 'AI Images',
     'product-shoot': 'Product Shoot',
-    'video-prompts': 'Video Prompts',
     'portrait': 'Portrait & Headshot',
     'architecture': 'Architecture & Interior',
     'food-drink': 'Food & Drink',

@@ -39,7 +39,7 @@ export const metadata: Metadata = {
         template: '%s | Freesets',
     },
     description:
-        'Discover, copy, and download the best free AI prompts and assets for Midjourney, DALL-E, Stable Diffusion, Sora, Runway, and more. 10,000+ curated prompts across images, video, product photography, and beyond.',
+        'Discover, copy, and download the best free AI prompts and assets for Midjourney, DALL-E, Stable Diffusion, and more. 10,000+ curated prompts across images, product photography, and beyond.',
     metadataBase: new URL(APP_URL),
     icons: {
         icon: [

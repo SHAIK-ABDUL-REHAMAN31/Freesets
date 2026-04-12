@@ -14,9 +14,7 @@ import type { ApiResponse } from '@/types/api.types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm'];
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;   // 10 MB
-const MAX_VIDEO_SIZE = 100 * 1024 * 1024;  // 100 MB
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -97,21 +95,17 @@ export async function POST(req: Request) {
         }
 
         // 5. Validate MIME type
-        const isImage = ALLOWED_IMAGE_TYPES.includes(file.type);
-        const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
-
-        if (!isImage && !isVideo) {
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
             return NextResponse.json(
-                { error: `Invalid file type "${file.type}". Allowed: ${[...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES].join(', ')}` },
+                { error: `Invalid file type "${file.type}". Allowed: ${ALLOWED_IMAGE_TYPES.join(', ')}` },
                 { status: 400, headers },
             );
         }
 
         // 6. Validate file size
-        const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
-        if (file.size > maxSize) {
+        if (file.size > MAX_IMAGE_SIZE) {
             return NextResponse.json(
-                { error: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max size: ${isVideo ? '100MB for videos' : '10MB for images'}.` },
+                { error: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max size: 10MB.` },
                 { status: 413, headers },
             );
         }

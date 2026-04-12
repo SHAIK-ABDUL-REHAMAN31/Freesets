@@ -33,24 +33,6 @@ const TOOL_THEMES: Record<AITool, ToolTheme> = {
         text: 'text-orange-300',
         ring: 'ring-orange-500/20',
     },
-    [AITool.SORA]: {
-        label: 'Sora',
-        bg: 'bg-sky-500/12',
-        text: 'text-sky-300',
-        ring: 'ring-sky-500/20',
-    },
-    [AITool.RUNWAY]: {
-        label: 'Runway',
-        bg: 'bg-rose-500/12',
-        text: 'text-rose-300',
-        ring: 'ring-rose-500/20',
-    },
-    [AITool.KLING]: {
-        label: 'Kling',
-        bg: 'bg-amber-500/12',
-        text: 'text-amber-300',
-        ring: 'ring-amber-500/20',
-    },
     [AITool.GEMINI]: {
         label: 'Gemini',
         bg: 'bg-blue-500/12',

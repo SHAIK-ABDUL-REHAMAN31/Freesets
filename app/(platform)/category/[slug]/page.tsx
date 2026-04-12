@@ -47,7 +47,6 @@ export async function generateMetadata({
 /** Map URL slug → Category enum value expected by the API */
 const SLUG_TO_CATEGORY: Record<CategorySlug, string> = {
     'ai-images': 'AI_IMAGES',
-    'video-prompts': 'VIDEO_PROMPTS',
     'product-shoot': 'PRODUCT_SHOOT',
     portrait: 'PORTRAIT',
     architecture: 'ARCHITECTURE',

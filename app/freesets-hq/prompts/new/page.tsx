@@ -8,14 +8,14 @@ import { useRouter } from 'next/navigation';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-    'AI_IMAGES', 'VIDEO_PROMPTS', 'PRODUCT_SHOOT', 'PORTRAIT',
+    'AI_IMAGES', 'PRODUCT_SHOOT', 'PORTRAIT',
     'ARCHITECTURE', 'FOOD', 'LOGO', 'TEXTURE',
     'FASHION', 'WALLPAPER', 'MOVIE',
 ] as const;
 
 const AI_TOOLS = [
-    'MIDJOURNEY', 'DALLE', 'STABLE_DIFFUSION', 'SORA',
-    'RUNWAY', 'KLING', 'GEMINI', 'FIREFLY',
+    'MIDJOURNEY', 'DALLE', 'STABLE_DIFFUSION',
+    'GEMINI', 'FIREFLY',
 ] as const;
 
 const ASPECT_RATIOS = ['1:1', '16:9', '9:16', '4:3'] as const;
@@ -24,7 +24,6 @@ const ASPECT_RATIOS = ['1:1', '16:9', '9:16', '4:3'] as const;
 const CATEGORY_TO_SLUG: Record<string, string> = {
     AI_IMAGES: 'ai-images',
     PRODUCT_SHOOT: 'product-shoot',
-    VIDEO_PROMPTS: 'video-prompts',
     PORTRAIT: 'portrait',
     ARCHITECTURE: 'architecture',
     FOOD: 'food-drink',
@@ -39,7 +38,6 @@ const CATEGORY_TO_SLUG: Record<string, string> = {
 const CATEGORY_LABELS: Record<string, string> = {
     AI_IMAGES: 'AI Images',
     PRODUCT_SHOOT: 'Product Shoot',
-    VIDEO_PROMPTS: 'Video Prompts',
     PORTRAIT: 'Portrait & Headshot',
     ARCHITECTURE: 'Architecture & Interior',
     FOOD: 'Food & Drink',
@@ -77,7 +75,6 @@ export default function AddPromptPage() {
     const [styleTagsInput, setStyleTagsInput] = useState('');
     const [selectedTools, setSelectedTools] = useState<string[]>([]);
     const [aspectRatio, setAspectRatio] = useState<string>('1:1');
-    const [videoUrl, setVideoUrl] = useState('');
     const [isFreeDownload, setIsFreeDownload] = useState(false);
     const [isPremium, setIsPremium] = useState(false);
     const [status, setStatus] = useState<'published' | 'pending'>('published');
@@ -134,11 +131,10 @@ export default function AddPromptPage() {
         if (!file) return;
 
         // Size validation
-        const isVideo = file.type.startsWith('video/');
-        const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+        const maxSize = 10 * 1024 * 1024;
         
         if (file.size > maxSize) {
-            setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max size: ${isVideo ? '100MB' : '10MB'}.`);
+            setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max size: 10MB.`);
             // Clear input
             e.target.value = '';
             return;
@@ -224,11 +220,8 @@ export default function AddPromptPage() {
 
                 const cldData = await cldRes.json();
                 
-                // Get extension correctly for videos vs images
-                const isVideo = imageFile!.type.startsWith('video/');
-                const thumbnailUrl = isVideo
-                    ? `https://res.cloudinary.com/${sigData.cloudName}/video/upload/${cldData.public_id}.jpg`
-                    : `https://res.cloudinary.com/${sigData.cloudName}/image/upload/c_scale,w_1200,f_webp,q_100,fl_progressive/${cldData.public_id}`;
+                // Build thumbnail URL
+                const thumbnailUrl = `https://res.cloudinary.com/${sigData.cloudName}/image/upload/c_scale,w_1200,f_webp,q_100,fl_progressive/${cldData.public_id}`;
 
                 imageData = {
                     url: cldData.secure_url,
@@ -263,7 +256,6 @@ export default function AddPromptPage() {
                 cloudinaryPublicId: imageData!.publicId,
                 cloudName: imageData!.cloudName,
                 thumbnailUrl: imageData!.thumbnailUrl,
-                outputVideoUrl: videoUrl || undefined,
                 isFreeDownload,
                 isPremium,
                 status,
@@ -511,17 +503,6 @@ export default function AddPromptPage() {
                             </p>
                         </div>
                     )}
-                </Field>
-
-                {/* Video URL */}
-                <Field label="Video URL" optional>
-                    <input
-                        type="url"
-                        value={videoUrl}
-                        onChange={(e) => setVideoUrl(e.target.value)}
-                        className="admin-input"
-                        placeholder="https://..."
-                    />
                 </Field>
 
                 {/* Toggles */}
