@@ -6,7 +6,6 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 const CATEGORY_VALUES = [
     'AI_IMAGES',
-    'VIDEO_PROMPTS',
     'PRODUCT_SHOOT',
     'PORTRAIT',
     'ARCHITECTURE',
@@ -22,9 +21,6 @@ const AI_TOOL_VALUES = [
     'MIDJOURNEY',
     'DALLE',
     'STABLE_DIFFUSION',
-    'SORA',
-    'RUNWAY',
-    'KLING',
     'GEMINI',
     'FIREFLY',
 ] as const;
@@ -44,7 +40,6 @@ export interface IPrompt {
     promptText: string;
     negativePrompt?: string;
     outputImageUrl: string;
-    outputVideoUrl?: string;
     cloudinaryPublicId: string;
     cloudName: string;
     thumbnailUrl: string;
@@ -90,9 +85,6 @@ const PromptSchema = new Schema<IPromptDocument>(
         outputImageUrl: {
             type: String,
             required: [true, 'Output image URL is required'],
-        },
-        outputVideoUrl: {
-            type: String,
         },
         cloudinaryPublicId: {
             type: String,

@@ -24,11 +24,6 @@ export const CATEGORY_CLOUDINARY_MAP: Record<string, CloudinaryCredentials> = {
         api_key: process.env.CLOUDINARY_PRODUCT_SHOOT_API_KEY,
         api_secret: process.env.CLOUDINARY_PRODUCT_SHOOT_API_SECRET,
     },
-    'video-prompts': {
-        cloud_name: process.env.CLOUDINARY_VIDEO_PROMPTS_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_VIDEO_PROMPTS_API_KEY,
-        api_secret: process.env.CLOUDINARY_VIDEO_PROMPTS_API_SECRET,
-    },
     'portrait': {
         cloud_name: process.env.CLOUDINARY_PORTRAIT_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_PORTRAIT_API_KEY,
@@ -87,7 +82,6 @@ export const SUPPORTED_CATEGORIES = Object.keys(CATEGORY_CLOUDINARY_MAP);
 export const DB_CATEGORY_TO_SLUG: Record<string, string> = {
     AI_IMAGES: 'ai-images',
     PRODUCT_SHOOT: 'product-shoot',
-    VIDEO_PROMPTS: 'video-prompts',
     PORTRAIT: 'portrait',
     ARCHITECTURE: 'architecture',
     FOOD: 'food-drink',
@@ -103,10 +97,6 @@ export const SLUG_TO_DB_CATEGORY: Record<string, string> = Object.fromEntries(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Video-compatible categories
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const VIDEO_CATEGORIES = ['video-prompts', 'movie'] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // getCloudinaryClient(category)

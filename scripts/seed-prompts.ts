@@ -76,28 +76,6 @@ const SAMPLE_PROMPTS = [
         aspectRatio: '16:9',
     },
 
-    // ── VIDEO_PROMPTS (2) ────────────────────────────────────────────────────
-    {
-        title: 'Drone Through Ancient Ruins',
-        promptText: 'Cinematic FPV drone shot gliding through crumbling ancient Greek temple ruins at golden hour. Camera weaves between massive Corinthian columns covered in moss and ivy. Dust particles float in warm sunbeams. Slow motion 120fps. Professional color grade with teal and orange palette. No people in frame.',
-        negativePrompt: 'modern objects, tourists, shaky camera',
-        category: 'VIDEO_PROMPTS',
-        subCategory: 'Travel',
-        styleTags: ['drone', 'ruins', 'cinematic', 'golden hour', 'slow motion'],
-        aiTools: ['SORA'],
-        aspectRatio: '16:9',
-    },
-    {
-        title: 'Deep Ocean Bioluminescence',
-        promptText: 'Underwater camera slowly descends into the deep ocean abyss. Bioluminescent jellyfish pulse with electric blue and violet light. Schools of translucent deep-sea fish dart past the lens. Particles of marine snow drift upward. The darkness is punctuated by sudden flashes of anglerfish lures. Macro lens details, National Geographic quality, 4K 60fps.',
-        negativePrompt: 'surface, boats, scuba divers, bright daylight',
-        category: 'VIDEO_PROMPTS',
-        subCategory: 'Nature',
-        styleTags: ['underwater', 'bioluminescent', 'deep sea', 'macro', 'nature'],
-        aiTools: ['RUNWAY'],
-        aspectRatio: '16:9',
-    },
-
     // ── PRODUCT_SHOOT (3) ────────────────────────────────────────────────────
     {
         title: 'Luxury Perfume on Marble',

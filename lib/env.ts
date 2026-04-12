@@ -24,11 +24,6 @@ const envSchema = z.object({
     CLOUDINARY_PRODUCT_SHOOT_API_KEY: z.string().min(1).optional(),
     CLOUDINARY_PRODUCT_SHOOT_API_SECRET: z.string().min(1).optional(),
 
-    // ── Cloudinary — Video Prompts ───────────────────────────────────────────
-    CLOUDINARY_VIDEO_PROMPTS_CLOUD_NAME: z.string().min(1).optional(),
-    CLOUDINARY_VIDEO_PROMPTS_API_KEY: z.string().min(1).optional(),
-    CLOUDINARY_VIDEO_PROMPTS_API_SECRET: z.string().min(1).optional(),
-
     // ── Cloudinary — Portrait ────────────────────────────────────────────────
     CLOUDINARY_PORTRAIT_CLOUD_NAME: z.string().min(1).optional(),
     CLOUDINARY_PORTRAIT_API_KEY: z.string().min(1).optional(),

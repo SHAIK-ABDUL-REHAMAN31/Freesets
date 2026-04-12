@@ -6,7 +6,6 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 const CATEGORY_VALUES = [
     'AI_IMAGES',
-    'VIDEO_PROMPTS',
     'PRODUCT_SHOOT',
     'PORTRAIT',
     'ARCHITECTURE',
@@ -20,9 +19,6 @@ const AI_TOOL_VALUES = [
     'MIDJOURNEY',
     'DALLE',
     'STABLE_DIFFUSION',
-    'SORA',
-    'RUNWAY',
-    'KLING',
     'GEMINI',
     'FIREFLY',
 ] as const;

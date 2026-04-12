@@ -16,7 +16,6 @@ import {
 
 const CATEGORY_LABELS: Record<Category, string> = {
     [Category.AI_IMAGES]: 'AI Images',
-    [Category.VIDEO_PROMPTS]: 'Video Prompts',
     [Category.PRODUCT_SHOOT]: 'Product Shoot',
     [Category.PORTRAIT]: 'Portrait',
     [Category.ARCHITECTURE]: 'Architecture',
@@ -31,9 +30,6 @@ const AI_TOOL_LABELS: Record<AITool, string> = {
     [AITool.MIDJOURNEY]: 'Midjourney',
     [AITool.DALLE]: 'DALL·E',
     [AITool.STABLE_DIFFUSION]: 'Stable Diffusion',
-    [AITool.SORA]: 'Sora',
-    [AITool.RUNWAY]: 'Runway',
-    [AITool.KLING]: 'Kling',
     [AITool.GEMINI]: 'Gemini',
     [AITool.FIREFLY]: 'Firefly',
 };

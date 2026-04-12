@@ -10,14 +10,6 @@ export const CATEGORIES = [
         color: '#A78BFA',
     },
     {
-        slug: 'video-prompts',
-        value: 'VIDEO_PROMPTS',
-        label: 'Video Prompts',
-        description: 'Cinematic motion prompts for Sora, Runway, Kling, and other video AI tools.',
-        icon: '🎬',
-        color: '#60A5FA',
-    },
-    {
         slug: 'product-shoot',
         value: 'PRODUCT_SHOOT',
         label: 'Product Shoot',

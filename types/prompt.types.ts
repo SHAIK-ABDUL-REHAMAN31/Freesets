@@ -6,16 +6,12 @@ export enum AITool {
     MIDJOURNEY = 'MIDJOURNEY',
     DALLE = 'DALLE',
     STABLE_DIFFUSION = 'STABLE_DIFFUSION',
-    SORA = 'SORA',
-    RUNWAY = 'RUNWAY',
-    KLING = 'KLING',
     GEMINI = 'GEMINI',
     FIREFLY = 'FIREFLY',
 }
 
 export enum Category {
     AI_IMAGES = 'AI_IMAGES',
-    VIDEO_PROMPTS = 'VIDEO_PROMPTS',
     PRODUCT_SHOOT = 'PRODUCT_SHOOT',
     PORTRAIT = 'PORTRAIT',
     ARCHITECTURE = 'ARCHITECTURE',
@@ -48,7 +44,6 @@ export interface IPrompt {
     promptText: string;
     negativePrompt?: string;
     outputImageUrl: string;
-    outputVideoUrl?: string;
     cloudinaryPublicId: string;
     /** Cloudinary account cloud_name — needed to build direct transform URLs */
     cloudName?: string;
@@ -84,7 +79,6 @@ export interface IPromptCard {
     cloudName?: string;
     imageWidth?: number;
     imageHeight?: number;
-    outputVideoUrl?: string;
     category: Category;
     subCategory: string;
     styleTags: string[];

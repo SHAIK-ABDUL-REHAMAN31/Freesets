@@ -199,41 +199,25 @@ export function PromptDetail({
       ══════════════════════════════════════════════════════════════════════ */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 lg:gap-10">
 
-                {/* ── LEFT COLUMN: Image / Video ─────────────────────────────────── */}
+                {/* ── LEFT COLUMN: Image ─────────────────────────────────── */}
                 <div className="space-y-3">
-                    {prompt.outputVideoUrl ? (
-                        /* Video player */
-                        <div className="relative w-full rounded-xl overflow-hidden bg-surface border border-surface-border">
-                            <video
-                                src={prompt.outputVideoUrl}
-                                controls
-                                playsInline
-                                preload="metadata"
-                                poster={prompt.outputImageUrl}
-                                className="w-full"
-                            >
-                                Your browser does not support the video element.
-                            </video>
-                        </div>
-                    ) : (
-                        /* Image — served at 1600px + q_100 + dpr_auto for retina */
-                        <div className="relative w-full rounded-xl overflow-hidden bg-surface border border-surface-border">
-                            <img
-                                src={
-                                    prompt.cloudinaryPublicId && prompt.cloudName
-                                        ? getPreviewUrl(prompt.cloudinaryPublicId, prompt.cloudName)
-                                        : prompt.outputImageUrl
-                                }
-                                alt={prompt.title}
-                                width={prompt.imageWidth || 1600}
-                                height={prompt.imageHeight || 1200}
-                                loading="eager"
-                                decoding="sync"
-                                className="w-full h-auto block rounded-xl"
-                                style={{ imageRendering: 'auto' }}
-                            />
-                        </div>
-                    )}
+                    {/* Image — served at 1600px + q_100 + dpr_auto for retina */}
+                    <div className="relative w-full rounded-xl overflow-hidden bg-surface border border-surface-border">
+                        <img
+                            src={
+                                prompt.cloudinaryPublicId && prompt.cloudName
+                                    ? getPreviewUrl(prompt.cloudinaryPublicId, prompt.cloudName)
+                                    : prompt.outputImageUrl
+                            }
+                            alt={prompt.title}
+                            width={prompt.imageWidth || 1600}
+                            height={prompt.imageHeight || 1200}
+                            loading="eager"
+                            decoding="sync"
+                            className="w-full h-auto block rounded-xl"
+                            style={{ imageRendering: 'auto' }}
+                        />
+                    </div>
 
                     {/* Caption */}
                     <p className="text-xs text-white/25 text-center italic">

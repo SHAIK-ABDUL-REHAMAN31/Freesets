@@ -35,7 +35,7 @@ export function getWebsiteSchema() {
         '@type': 'WebSite',
         name: 'Freesets',
         url: APP_URL,
-        description: 'Discover, copy, and save the absolute highest-quality AI image & video generation prompts.',
+        description: 'Discover, copy, and save the absolute highest-quality AI image generation prompts.',
         publisher: {
             '@type': 'Organization',
             name: 'Freesets',

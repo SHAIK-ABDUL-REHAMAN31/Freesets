@@ -1,6 +1,6 @@
 # Freesets
 
-**Discover, copy, and save the absolute highest-quality AI image & video generation prompts.**
+**Discover, copy, and save the absolute highest-quality AI image generation prompts.**
 
 Freesets is a curated prompt directory built for creators, designers, and AI enthusiasts. Browse thousands of prompts across categories like product photography, architecture, portraits, logos, and more — then copy them directly into your favorite AI tools.
 

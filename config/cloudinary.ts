@@ -4,7 +4,6 @@
 
 export const CLOUDINARY_FOLDERS = {
     IMAGES: 'freesets/images',
-    VIDEOS: 'freesets/videos',
     THUMBNAILS: 'freesets/thumbnails',
     AVATARS: 'freesets/avatars',
 } as const;
